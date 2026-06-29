@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: sentinel-aiops
+  task:
+    scheduling:
+      pool:
+        size: 4        # traffic generator (1s) + SLO/SLA monitors run concurrently
+  datasource:
+    url: jdbc:h2:mem:aiops;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true          # http://localhost:8080/h2-console
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+# ---- Observability (SRE) ----
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true        # liveness/readiness probes for k8s
+  metrics:
+    tags:
+      application: sentinel-aiops
+
+# ---- Resilience4j circuit breaker for AI calls ----
+resilience4j:
+  circuitbreaker:
+    instances:
+      aiProvider:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
+  retry:
+    instances:
+      aiProvider:
+        max-attempts: 2
+        wait-duration: 300ms
+
+# ---- AI provider selection ----
+aiops:
+  prometheus:
+    # When set (e.g. http://prometheus:9090) SLIs are read from Prometheus;
+    # otherwise the in-process telemetry store is used. Auto-falls-back if down.
+    url: ${PROMETHEUS_URL:}
+  telemetry:
+    enabled: ${TELEMETRY_ENABLED:true}
+    services: checkout-api,payment-gateway,identity-service,data-platform
+  # ---- External integrations (empty => simulated/log; set to go live) ----
+  integrations:
+    slack:
+      webhook-url: ${SLACK_WEBHOOK_URL:}
+    pagerduty:
+      routing-key: ${PAGERDUTY_ROUTING_KEY:}
+    webhook:
+      url: ${OUTBOUND_WEBHOOK_URL:}
+  remediation:
+    # simulated | webhook | kubernetes. dry-run forces simulation regardless of mode.
+    mode: ${REMEDIATION_MODE:simulated}
+    dry-run: ${REMEDIATION_DRY_RUN:true}
+    webhook-url: ${REMEDIATION_WEBHOOK_URL:}
+    kubernetes:
+      api-url: ${K8S_API_URL:}
+      namespace: ${K8S_NAMESPACE:default}
+      token: ${K8S_TOKEN:}
+  security:
+    # Override in production via env vars. Secret must be >= 32 bytes for HS256.
+    jwt-secret: ${JWT_SECRET:change-me-please-use-a-long-random-secret-key-32b+}
+    jwt-ttl-minutes: ${JWT_TTL_MINUTES:720}
+  ai:
+    prefer-remote: true       # use remote provider when an API key is present
+    anthropic:
+      # Set via env var ANTHROPIC_API_KEY to enable the remote LLM provider.
+      # Left empty by default so the app runs fully offline.
+      api-key: ${ANTHROPIC_API_KEY:}
+      model: claude-sonnet-4-6
+      base-url: https://api.anthropic.com
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.sentinel.aiops: INFO

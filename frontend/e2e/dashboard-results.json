@@ -1,0 +1,149 @@
+{
+  "results": [
+    {
+      "group": "Stat cards",
+      "control": "Four KPI cards render with values",
+      "expected": "4 cards, numeric values",
+      "actual": "Total Incidents=13, Open=12, Resolved=1, MTTR (min)=10",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Severity chart",
+      "control": "Donut chart renders",
+      "expected": "svg/recharts present",
+      "actual": "chart svg present, 8 slices",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "AI Assistant",
+      "control": "Ask AI button (typed query)",
+      "expected": "answer renders in ai-box",
+      "actual": "Based on 13 incident(s) in scope: 12 are currently unresolved. Highest",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "AI Assistant",
+      "control": "Suggestion chip: \"Which incidents are still unre…\"",
+      "expected": "answer renders",
+      "actual": "Based on 13 incident(s) in scope: 12 are currently",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "AI Assistant",
+      "control": "Suggestion chip: \"What is the most critical inci…\"",
+      "expected": "answer renders",
+      "actual": "Based on 13 incident(s) in scope: 12 are currently",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "AI Assistant",
+      "control": "Suggestion chip: \"Summarize the payment-related …\"",
+      "expected": "answer renders",
+      "actual": "Based on 13 incident(s) in scope: 12 are currently",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Incidents panel",
+      "control": "Active incidents list renders",
+      "expected": "rows present or empty-state",
+      "actual": "13 incident rows",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Incidents panel",
+      "control": "+ Report Incident button opens form",
+      "expected": "form fields appear",
+      "actual": "form opened",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Incidents panel",
+      "control": "Cancel button closes form",
+      "expected": "form closes",
+      "actual": "form closed",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Incidents panel",
+      "control": "Create & Triage adds incident",
+      "expected": "new row appears",
+      "actual": "incident created and listed",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Top bar",
+      "control": "AI status pill shows provider",
+      "expected": "provider text present",
+      "actual": "AI: cached(heuristic-local) (offline)",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Top bar",
+      "control": "Notification bell opens panel",
+      "expected": "panel opens",
+      "actual": "panel toggled true",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Tabs",
+      "control": "Tab \"Dashboard\" activates & renders",
+      "expected": "becomes active, content present",
+      "actual": "active=Dashboard, contentLen=4133",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Tabs",
+      "control": "Tab \"Services\" activates & renders",
+      "expected": "becomes active, content present",
+      "actual": "active=Services, contentLen=621",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Tabs",
+      "control": "Tab \"Reliability\" activates & renders",
+      "expected": "becomes active, content present",
+      "actual": "active=Reliability, contentLen=2855",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Tabs",
+      "control": "Tab \"Automation\" activates & renders",
+      "expected": "becomes active, content present",
+      "actual": "active=Automation, contentLen=3334",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Tabs",
+      "control": "Tab \"Integrations\" activates & renders",
+      "expected": "becomes active, content present",
+      "actual": "active=Integrations, contentLen=1080",
+      "status": "PASS",
+      "shot": ""
+    },
+    {
+      "group": "Snapshot",
+      "control": "Dashboard rendered screenshot",
+      "expected": "captured",
+      "actual": "e2e/screens/dash_dashboard_final.png",
+      "status": "PASS",
+      "shot": "e2e/screens/dash_dashboard_final.png"
+    }
+  ],
+  "consoleErrors": []
+}

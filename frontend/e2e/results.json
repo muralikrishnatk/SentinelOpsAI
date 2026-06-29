@@ -1,0 +1,472 @@
+{
+  "results": [
+    {
+      "tab": "Login",
+      "control": "Sign in (wrong pw)",
+      "action": "submit bad creds",
+      "expected": "error message shown",
+      "actual": "error: Invalid username or password",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Login",
+      "control": "Demo \"Responder\" button",
+      "action": "click",
+      "expected": "fills username/password",
+      "actual": "u=responder p=responder123",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Login",
+      "control": "Sign in (valid)",
+      "action": "submit",
+      "expected": "lands on dashboard",
+      "actual": "topbar visible, role RESPONDER",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Topbar",
+      "control": "Notification bell",
+      "action": "click open",
+      "expected": "panel opens",
+      "actual": "panel open",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Topbar",
+      "control": "Notification bell",
+      "action": "click close",
+      "expected": "panel closes",
+      "actual": "panel closed",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Topbar",
+      "control": "Logout",
+      "action": "click",
+      "expected": "returns to login",
+      "actual": "login screen",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Tab Dashboard",
+      "action": "click",
+      "expected": "renders, no blank screen",
+      "actual": "active=Dashboard, contentLen=2895",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Tab Services",
+      "action": "click",
+      "expected": "renders, no blank screen",
+      "actual": "active=Services, contentLen=587",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Tab Reliability",
+      "action": "click",
+      "expected": "renders, no blank screen",
+      "actual": "active=Reliability, contentLen=2798",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Tab Automation",
+      "action": "click",
+      "expected": "renders, no blank screen",
+      "actual": "active=Automation, contentLen=2548",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Tab Integrations",
+      "action": "click",
+      "expected": "renders, no blank screen",
+      "actual": "active=Integrations, contentLen=1046",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Nav",
+      "control": "Users tab (responder)",
+      "action": "check absent",
+      "expected": "hidden for non-admin",
+      "actual": "absent (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Dashboard",
+      "control": "Stat cards",
+      "action": "load",
+      "expected": "4 stat cards with numbers",
+      "actual": "4 cards, first value=10",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Dashboard",
+      "control": "Severity chart",
+      "action": "render",
+      "expected": "chart svg present",
+      "actual": "chart rendered",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Dashboard",
+      "control": "Ask AI (typed)",
+      "action": "type+submit",
+      "expected": "answer renders",
+      "actual": "answer: Based on 10 incident(s) in scope: 9 are currently unresolved",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Dashboard",
+      "control": "Ask AI suggestion chip",
+      "action": "click",
+      "expected": "answer renders",
+      "actual": "answer: Based on 10 incident(s) in scope: 9 are currently unresolved",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incidents",
+      "control": "+ Report Incident",
+      "action": "open form",
+      "expected": "form fields appear",
+      "actual": "form open",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incidents",
+      "control": "Create & Triage",
+      "action": "fill+submit",
+      "expected": "new incident appears in list",
+      "actual": "incident visible in list",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Open drawer",
+      "action": "click row",
+      "expected": "drawer expands",
+      "actual": "drawer open",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Drawer stays open on control click",
+      "action": "click a transition btn",
+      "expected": "drawer remains open after click",
+      "actual": "ERROR: drawer COLLAPSED after clicking a control (row onClick bubbling)",
+      "status": "FAIL",
+      "screenshot": "e2e/screens/Incident_drawer_Drawer_stays_open_on_control_click_click_a_transition_btn.png"
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Transition → ACKNOWLEDGED",
+      "action": "click",
+      "expected": "status badge becomes ACKNOWLEDGED",
+      "actual": "status=ACKNOWLEDGED",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Assign input + button",
+      "action": "type+click Assign",
+      "expected": "assignee updates (verify by reopening)",
+      "actual": "assignee=payments-oncall",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Re-run AI",
+      "action": "click",
+      "expected": "timeline gets AI re-analysis event",
+      "actual": "AI re-analysis event in timeline",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Comment box + Post",
+      "action": "type+submit",
+      "expected": "comment appears in timeline",
+      "actual": "comment in timeline: e2e-comment-1782427487346",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Postmortem subtab",
+      "action": "click",
+      "expected": "switches to postmortem view",
+      "actual": "ERROR: locator.waitFor: Timeout 5000ms exceeded.",
+      "status": "FAIL",
+      "screenshot": "e2e/screens/Incident_drawer_Postmortem_subtab_click.png"
+    },
+    {
+      "tab": "Incident drawer",
+      "control": "Generate AI Postmortem",
+      "action": "click",
+      "expected": "postmortem text appears",
+      "actual": "ERROR: locator.innerText: Timeout 15000ms exceeded.",
+      "status": "FAIL",
+      "screenshot": "e2e/screens/Incident_drawer_Generate_AI_Postmortem_click.png"
+    },
+    {
+      "tab": "Reliability",
+      "control": "SLO cards",
+      "action": "render",
+      "expected": "cards with SLI numbers",
+      "actual": "5 SLO cards, first SLI=82.297%",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Reliability",
+      "control": "Inject fault",
+      "action": "click",
+      "expected": "card shows FAULT ACTIVE",
+      "actual": "FAULT ACTIVE shown",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Reliability",
+      "control": "Burn rate updates",
+      "action": "wait for live refresh",
+      "expected": "SLI/headroom changes after fault",
+      "actual": "SLI 82.363 -> 82.516 (changed=true)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Reliability",
+      "control": "Alerts feed",
+      "action": "populate after fault",
+      "expected": "burn-rate alert row appears",
+      "actual": "15 alert rows",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Reliability",
+      "control": "Clear fault",
+      "action": "click",
+      "expected": "FAULT ACTIVE clears",
+      "actual": "clear clicked",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Automation",
+      "control": "Runbook list",
+      "action": "render",
+      "expected": "runbook cards present",
+      "actual": "4 runbook cards",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Automation",
+      "control": "Executions list",
+      "action": "render",
+      "expected": "execution rows present",
+      "actual": "9 executions",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Automation",
+      "control": "Approve & run",
+      "action": "create pending then approve",
+      "expected": "pending count drops, SUCCEEDED appears",
+      "actual": "pending 3->2, SUCCEEDED execs=5",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Integrations",
+      "control": "Integration cards",
+      "action": "render",
+      "expected": "rows with live/simulated state",
+      "actual": "8 cards; states=SIMULATED,UP",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Notifications",
+      "control": "SSE toast on event",
+      "action": "inject fault, await toast/bell",
+      "expected": "toast appears or bell count increments",
+      "actual": "bell-count appeared, bellCount=5",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Live/SSE",
+      "control": "Auto list update",
+      "action": "create incident via API, no reload",
+      "expected": "row appears via SSE",
+      "actual": "row appeared without reload",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Login as viewer",
+      "action": "login",
+      "expected": "role tag shows VIEWER",
+      "actual": "VIEWER",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Users tab",
+      "action": "check hidden",
+      "expected": "absent for viewer",
+      "actual": "absent (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Report Incident button",
+      "action": "check hidden",
+      "expected": "no create button on dashboard",
+      "actual": "hidden (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Incident drawer write controls",
+      "action": "open drawer, check",
+      "expected": "no transition/assign/comment controls",
+      "actual": "no write controls (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Inject/Clear fault buttons",
+      "action": "check hidden",
+      "expected": "no fault buttons for viewer",
+      "actual": "no fault buttons (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "RBAC",
+      "control": "Approve button",
+      "action": "check hidden",
+      "expected": "no approve button for viewer",
+      "actual": "hidden (correct)",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "Login as admin",
+      "action": "login",
+      "expected": "role tag shows ADMIN",
+      "actual": "ADMIN",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "Users tab visible",
+      "action": "check present",
+      "expected": "admin sees Users tab",
+      "actual": "present",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "User table",
+      "action": "render",
+      "expected": "seeded users listed",
+      "actual": "3 users",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "+ Add User",
+      "action": "open form",
+      "expected": "create form appears",
+      "actual": "form open",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "Create user",
+      "action": "fill+submit",
+      "expected": "new user row appears",
+      "actual": "user created",
+      "status": "PASS",
+      "screenshot": ""
+    },
+    {
+      "tab": "Users",
+      "control": "Change role select",
+      "action": "change dropdown",
+      "expected": "role persists after reload",
+      "actual": "ERROR: role did not persist, got ADMIN",
+      "status": "FAIL",
+      "screenshot": "e2e/screens/Users_Change_role_select_change_dropdown.png"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "location": "{\"url\":\"http://localhost:5173/api/auth/login\",\"line\":0,\"column\":0,\"lineNumber\":0,\"columnNumber\":0}",
+      "when": "Login > Sign in (wrong pw): submit bad creds"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "location": "{\"url\":\"http://localhost:5173/api/users/1/role?role=RESPONDER\",\"line\":0,\"column\":0,\"lineNumber\":0,\"columnNumber\":0}",
+      "when": "Users > Change role select: change dropdown"
+    },
+    {
+      "text": "PAGEERROR: Object",
+      "location": "",
+      "when": "Users > Change role select: change dropdown"
+    },
+    {
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "location": "{\"url\":\"http://localhost:5173/api/users/1/role?role=VIEWER\",\"line\":0,\"column\":0,\"lineNumber\":0,\"columnNumber\":0}",
+      "when": "Users > Change role select: change dropdown"
+    },
+    {
+      "text": "PAGEERROR: Object",
+      "location": "",
+      "when": "Users > Change role select: change dropdown"
+    }
+  ]
+}
