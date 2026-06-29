@@ -27,9 +27,9 @@ async function handle(r) {
 
 const get = (u) => fetch(u, { headers: headers() }).then(handle);
 const post = (u, body) =>
-    fetch(u, { method: 'POST', headers: headers(), body: body ? JSON.stringify(body) : undefined }).then(handle);
+  fetch(u, { method: 'POST', headers: headers(), body: body ? JSON.stringify(body) : undefined }).then(handle);
 const put = (u, body) =>
-    fetch(u, { method: 'PUT', headers: headers(), body: body ? JSON.stringify(body) : undefined }).then(handle);
+  fetch(u, { method: 'PUT', headers: headers(), body: body ? JSON.stringify(body) : undefined }).then(handle);
 const del = (u) => fetch(u, { method: 'DELETE', headers: headers() }).then(handle);
 
 export const api = {
@@ -38,6 +38,15 @@ export const api = {
   me: () => get('/api/auth/me'),
 
   listIncidents: () => get('/api/incidents'),
+  searchIncidents: ({ q = '', status = '', severity = '', page = 0, size = 10 } = {}) => {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (status) params.set('status', status);
+    if (severity) params.set('severity', severity);
+    params.set('page', page);
+    params.set('size', size);
+    return get(`/api/incidents/search?${params.toString()}`);
+  },
   createIncident: (body) => post('/api/incidents', body),
   transition: (id, body) => post(`/api/incidents/${id}/transition`, body),
   reanalyze: (id) => post(`/api/incidents/${id}/reanalyze`),
@@ -78,4 +87,22 @@ export const api = {
 
   // Integrations health
   integrations: () => get('/api/integrations'),
+
+  // On-call
+  oncall: (team) => get(`/api/oncall${team ? `?team=${encodeURIComponent(team)}` : ''}`),
+  oncallNow: (team) => get(`/api/oncall/current?team=${encodeURIComponent(team)}`),
+  addShift: (body) => post('/api/oncall', body),
+  deleteShift: (id) => del(`/api/oncall/${id}`),
+
+  // Organizations & teams
+  orgs: () => get('/api/orgs'),
+  teams: (orgId) => get(`/api/teams${orgId ? `?orgId=${orgId}` : ''}`),
+
+  // Audit (admin)
+  audit: ({ page = 0, size = 25, q = '' } = {}) => {
+    const params = new URLSearchParams();
+    params.set('page', page); params.set('size', size);
+    if (q) params.set('q', q);
+    return get(`/api/audit?${params.toString()}`);
+  },
 };

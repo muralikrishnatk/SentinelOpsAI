@@ -1,5 +1,8 @@
 package com.sentinel.aiops.config;
 
+import com.sentinel.aiops.domain.Organization;
+import com.sentinel.aiops.domain.OnCallShift;
+import com.sentinel.aiops.domain.Team;
 import com.sentinel.aiops.domain.enums.*;
 import com.sentinel.aiops.dto.AuthDtos.RegisterRequest;
 import com.sentinel.aiops.dto.CreateIncidentRequest;
@@ -7,6 +10,10 @@ import com.sentinel.aiops.dto.RunbookDtos.RunbookRequest;
 import com.sentinel.aiops.dto.RunbookDtos.StepReq;
 import com.sentinel.aiops.dto.ServiceDtos.ServiceRequest;
 import com.sentinel.aiops.dto.SloDtos.SloRequest;
+import com.sentinel.aiops.repository.OnCallShiftRepository;
+import com.sentinel.aiops.repository.OrganizationRepository;
+import com.sentinel.aiops.repository.TeamRepository;
+import com.sentinel.aiops.repository.UserRepository;
 import com.sentinel.aiops.service.IncidentService;
 import com.sentinel.aiops.service.ServiceCatalogService;
 import com.sentinel.aiops.service.UserService;
@@ -17,6 +24,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /** Seeds demo users, services, SLOs, sample incidents, and remediation runbooks. */
@@ -26,8 +35,33 @@ public class DataSeeder {
 
     @Bean
     CommandLineRunner seed(UserService users, ServiceCatalogService services, SloService slos,
-                           IncidentService incidents, RemediationService remediation) {
+                           IncidentService incidents, RemediationService remediation,
+                           UserRepository userRepo, OrganizationRepository orgRepo,
+                           TeamRepository teamRepo, OnCallShiftRepository shiftRepo) {
         return args -> {
+            // Idempotent: with a persistent database, only seed an empty schema.
+            if (userRepo.count() > 0) {
+                log.info("Seed skipped — existing data detected ({} users).", userRepo.count());
+                return;
+            }
+
+            // ---- Organization & teams (platform tenancy) ----
+            Organization org = orgRepo.save(Organization.builder()
+                    .name("Acme Corp").slug("acme").plan("ENTERPRISE").build());
+            teamRepo.save(Team.builder().name("payments-oncall").organizationId(org.getId())
+                    .description("Payments & checkout").escalationContact("payments-lead").build());
+            teamRepo.save(Team.builder().name("identity-oncall").organizationId(org.getId())
+                    .description("Auth & identity").escalationContact("identity-lead").build());
+            teamRepo.save(Team.builder().name("platform-oncall").organizationId(org.getId())
+                    .description("Core platform").escalationContact("platform-lead").build());
+
+            // ---- On-call: put someone on call now so routing works in the demo ----
+            Instant now = Instant.now();
+            shiftRepo.save(OnCallShift.builder().teamName("payments-oncall").username("responder")
+                    .startAt(now.minus(1, ChronoUnit.HOURS)).endAt(now.plus(7, ChronoUnit.DAYS)).build());
+            shiftRepo.save(OnCallShift.builder().teamName("platform-oncall").username("admin")
+                    .startAt(now.minus(1, ChronoUnit.HOURS)).endAt(now.plus(7, ChronoUnit.DAYS)).build());
+
             // ---- Users ----
             users.register(new RegisterRequest("admin", "admin123", "Ada Admin",
                     "admin@sentinel.io", Role.ADMIN, "platform-oncall"), true);
@@ -84,7 +118,7 @@ public class DataSeeder {
                     "Identity scale-out", "identity-service", true, 4,
                     List.of(new StepReq(RunbookActionType.SCALE_OUT, "replicas=6"))));
 
-            log.info("Seed complete: users, services, SLOs, sample incidents, runbooks.");
+            log.info("Seed complete: org, teams, on-call, users, services, SLOs, incidents, runbooks.");
         };
     }
 }

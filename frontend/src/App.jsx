@@ -10,6 +10,8 @@ import Users from './components/Users.jsx';
 import Reliability from './components/Reliability.jsx';
 import Remediation from './components/Remediation.jsx';
 import Integrations from './components/Integrations.jsx';
+import OnCall from './components/OnCall.jsx';
+import Audit from './components/Audit.jsx';
 import NotificationCenter from './components/NotificationCenter.jsx';
 
 export default function App() {
@@ -70,7 +72,7 @@ export default function App() {
       pushNote('incident.created', d); onChange(); window.dispatchEvent(new Event('aiops:incident'));
     });
     ['incident.updated', 'incident.comment'].forEach((ev) =>
-      es.addEventListener(ev, () => { onChange(); window.dispatchEvent(new Event('aiops:incident')); })
+        es.addEventListener(ev, () => { onChange(); window.dispatchEvent(new Event('aiops:incident')); })
     );
     // SLO engine ticks drive the Reliability + Automation tabs without a full refresh.
     es.addEventListener('slo.updated', (e) => {
@@ -91,75 +93,85 @@ export default function App() {
   const canWrite = me.role === 'ADMIN' || me.role === 'RESPONDER';
 
   return (
-    <div className="app">
-      <div className="topbar">
-        <div className="brand">
-          <div className="logo">S</div>
-          <div>
-            <h1>Sentinel AIOps</h1>
-            <small>AI-powered incident management &amp; observability</small>
+      <div className="app">
+        <div className="topbar">
+          <div className="brand">
+            <div className="logo">S</div>
+            <div>
+              <h1>Sentinel AIOps</h1>
+              <small>AI-powered incident management &amp; observability</small>
+            </div>
           </div>
-        </div>
-        <div className="top-right">
+          <div className="top-right">
           <span className="ai-pill">
             AI: <b>{aiStatus ? aiStatus.activeProvider : '…'}</b>
             {aiStatus && !aiStatus.remote ? ' (offline)' : ''}
           </span>
-          <NotificationCenter items={notifications} onClear={() => setNotifications([])} />
-          <span className="user-chip">
+            <NotificationCenter items={notifications} onClear={() => setNotifications([])} />
+            <span className="user-chip">
             {me.displayName} · <span className={`role-tag role-${me.role}`}>{me.role}</span>
           </span>
-          <button className="btn ghost small" onClick={logout}>Logout</button>
-        </div>
-      </div>
-
-      <div className="tabs">
-        <button className={tab === 'dashboard' ? 'tab active' : 'tab'} onClick={() => setTab('dashboard')}>
-          Dashboard
-        </button>
-        <button className={tab === 'services' ? 'tab active' : 'tab'} onClick={() => setTab('services')}>
-          Services
-        </button>
-        <button className={tab === 'reliability' ? 'tab active' : 'tab'} onClick={() => setTab('reliability')}>
-          Reliability
-        </button>
-        <button className={tab === 'automation' ? 'tab active' : 'tab'} onClick={() => setTab('automation')}>
-          Automation
-        </button>
-        <button className={tab === 'integrations' ? 'tab active' : 'tab'} onClick={() => setTab('integrations')}>
-          Integrations
-        </button>
-        {isAdmin && (
-          <button className={tab === 'users' ? 'tab active' : 'tab'} onClick={() => setTab('users')}>
-            Users
-          </button>
-        )}
-      </div>
-
-      {tab === 'dashboard' && (
-        <>
-          <div className="grid cards"><StatCards stats={stats} /></div>
-          <div className="cols">
-            <div>
-              <p className="section-title">Active Incidents</p>
-              <Incidents incidents={incidents} onChange={refresh} canWrite={canWrite} />
-            </div>
-            <div>
-              <p className="section-title">Severity Mix</p>
-              <SeverityChart stats={stats} />
-              <div style={{ height: 16 }} />
-              <p className="section-title">AI Assistant</p>
-              <AiAssistant />
-            </div>
+            <button className="btn ghost small" onClick={logout}>Logout</button>
           </div>
-        </>
-      )}
+        </div>
 
-      {tab === 'services' && <Services services={services} isAdmin={isAdmin} onChange={refresh} />}
-      {tab === 'reliability' && <Reliability canWrite={canWrite} />}
-      {tab === 'automation' && <Remediation canWrite={canWrite} />}
-      {tab === 'integrations' && <Integrations />}
-      {tab === 'users' && isAdmin && <Users />}
-    </div>
+        <div className="tabs">
+          <button className={tab === 'dashboard' ? 'tab active' : 'tab'} onClick={() => setTab('dashboard')}>
+            Dashboard
+          </button>
+          <button className={tab === 'services' ? 'tab active' : 'tab'} onClick={() => setTab('services')}>
+            Services
+          </button>
+          <button className={tab === 'reliability' ? 'tab active' : 'tab'} onClick={() => setTab('reliability')}>
+            Reliability
+          </button>
+          <button className={tab === 'automation' ? 'tab active' : 'tab'} onClick={() => setTab('automation')}>
+            Automation
+          </button>
+          <button className={tab === 'integrations' ? 'tab active' : 'tab'} onClick={() => setTab('integrations')}>
+            Integrations
+          </button>
+          <button className={tab === 'oncall' ? 'tab active' : 'tab'} onClick={() => setTab('oncall')}>
+            On-call
+          </button>
+          {isAdmin && (
+              <>
+                <button className={tab === 'audit' ? 'tab active' : 'tab'} onClick={() => setTab('audit')}>
+                  Audit
+                </button>
+                <button className={tab === 'users' ? 'tab active' : 'tab'} onClick={() => setTab('users')}>
+                  Users
+                </button>
+              </>
+          )}
+        </div>
+
+        {tab === 'dashboard' && (
+            <>
+              <div className="grid cards"><StatCards stats={stats} /></div>
+              <div className="cols">
+                <div>
+                  <p className="section-title">Active Incidents</p>
+                  <Incidents onChange={refresh} canWrite={canWrite} />
+                </div>
+                <div>
+                  <p className="section-title">Severity Mix</p>
+                  <SeverityChart stats={stats} />
+                  <div style={{ height: 16 }} />
+                  <p className="section-title">AI Assistant</p>
+                  <AiAssistant />
+                </div>
+              </div>
+            </>
+        )}
+
+        {tab === 'services' && <Services services={services} isAdmin={isAdmin} onChange={refresh} />}
+        {tab === 'reliability' && <Reliability canWrite={canWrite} />}
+        {tab === 'automation' && <Remediation canWrite={canWrite} />}
+        {tab === 'integrations' && <Integrations />}
+        {tab === 'oncall' && <OnCall canWrite={canWrite} />}
+        {tab === 'audit' && isAdmin && <Audit />}
+        {tab === 'users' && isAdmin && <Users />}
+      </div>
   );
 }

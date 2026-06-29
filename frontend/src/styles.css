@@ -238,3 +238,13 @@ textarea.field { min-height: 70px; resize: vertical; }
   border-radius: 10px; padding: 12px 14px; box-shadow: 0 12px 40px rgba(0,0,0,.5); cursor: pointer;
   max-width: 360px; animation: slidein .25s ease; }
 @keyframes slidein { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ---- Filters + pagination ---- */
+.filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+
+/* ---- Audit table ---- */
+.audit-head, .audit-row { display: grid; grid-template-columns: 1.4fr 1.2fr 2.2fr 0.6fr 1fr; gap: 10px;
+  align-items: center; padding: 8px 4px; font-size: 13px; }
+.audit-head { color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--border); font-size: 12px; }
+.audit-row { border-bottom: 1px dashed var(--border); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }

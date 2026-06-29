@@ -1,13 +1,36 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aiops-postgres
+    environment:
+      POSTGRES_DB: sentinel
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentinel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ./backend
     container_name: aiops-backend
     ports:
       - "8080:8080"
     environment:
+      DB_URL: jdbc:postgresql://postgres:5432/sentinel
+      DB_USERNAME: sentinel
+      DB_PASSWORD: sentinel
+      JWT_SECRET: ${JWT_SECRET:-change-me-please-use-a-long-random-secret-key-32b+}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      # Point the SLO engine at the bundled Prometheus (falls back to in-memory if down)
       PROMETHEUS_URL: http://prometheus:9090
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
       interval: 15s
@@ -31,3 +54,6 @@ services:
       - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
       - backend
+
+volumes:
+  pgdata:

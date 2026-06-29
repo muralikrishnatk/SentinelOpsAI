@@ -58,6 +58,20 @@ public class IncidentController {
 
     public record AssignRequest(@jakarta.validation.constraints.NotBlank String assignee) {}
 
+    @GetMapping("/search")
+    @Operation(summary = "Paged, filtered incident search (status, severity, text q)")
+    public org.springframework.data.domain.Page<IncidentResponse> search(
+            @RequestParam(required = false) com.sentinel.aiops.domain.enums.IncidentStatus status,
+            @RequestParam(required = false) com.sentinel.aiops.domain.enums.Severity severity,
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        var pageable = org.springframework.data.domain.PageRequest.of(
+                page, Math.min(size, 100),
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "updatedAt"));
+        return service.search(status, severity, q, pageable);
+    }
+
     @PostMapping("/{id}/assign")
     @PreAuthorize("hasAnyRole('RESPONDER','ADMIN')")
     @Operation(summary = "Assign or reassign an incident to a user or on-call team")

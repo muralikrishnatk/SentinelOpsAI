@@ -5,22 +5,32 @@ spring:
     scheduling:
       pool:
         size: 4        # traffic generator (1s) + SLO/SLA monitors run concurrently
+  # ---- PostgreSQL (enterprise default). Override via env in every environment. ----
   datasource:
-    url: jdbc:h2:mem:aiops;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ""
-  h2:
-    console:
-      enabled: true          # http://localhost:8080/h2-console
-      path: /h2-console
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sentinel}
+    username: ${DB_USERNAME:sentinel}
+    password: ${DB_PASSWORD:sentinel}
+    hikari:
+      pool-name: sentinel-pool
+      maximum-pool-size: ${DB_POOL_MAX:20}    # per instance — scale horizontally, not by growing the pool
+      minimum-idle: ${DB_POOL_MIN:5}
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      idle-timeout: 600000
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: ${JPA_DDL_AUTO:update}        # 'prod' profile switches to 'validate' (Flyway owns the schema)
     open-in-view: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}          # enabled in the 'prod' profile once the schema is frozen
+    baseline-on-migrate: true
 
 server:
   port: 8080
@@ -65,6 +75,11 @@ aiops:
   telemetry:
     enabled: ${TELEMETRY_ENABLED:true}
     services: checkout-api,payment-gateway,identity-service,data-platform
+  # ---- API rate limiting (per-client token bucket; protects the platform at scale) ----
+  ratelimit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    capacity: ${RATE_LIMIT_CAPACITY:120}        # burst size per client
+    refill-per-minute: ${RATE_LIMIT_RPM:120}    # sustained requests/min per client
   # ---- External integrations (empty => simulated/log; set to go live) ----
   integrations:
     slack:
@@ -102,3 +117,39 @@ springdoc:
 logging:
   level:
     com.sentinel.aiops: INFO
+
+# ============================================================================
+# Profiles
+#   local : H2 in-memory, schema auto-created — zero-dependency dev/demo
+#   prod  : Hibernate validates only; Flyway owns the schema (run migrations)
+# Activate with SPRING_PROFILES_ACTIVE=local  (or prod)
+# ============================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:h2:mem:aiops;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true

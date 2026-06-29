@@ -3,6 +3,7 @@ package com.sentinel.aiops.service;
 import com.sentinel.aiops.domain.Incident;
 import com.sentinel.aiops.domain.TimelineEvent;
 import com.sentinel.aiops.domain.enums.IncidentStatus;
+import com.sentinel.aiops.domain.enums.Severity;
 import com.sentinel.aiops.domain.enums.TimelineEventType;
 import com.sentinel.aiops.dto.*;
 import com.sentinel.aiops.dto.TimelineDtos.TimelineView;
@@ -22,6 +23,8 @@ import com.sentinel.aiops.service.timeline.TimelineService;
 import com.sentinel.aiops.service.triage.TriagePipeline;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,6 +195,14 @@ public class IncidentService {
                 .sorted(Comparator.comparing(Incident::getCreatedAt).reversed())
                 .map(IncidentResponse::from)
                 .toList();
+    }
+
+    /** Paged, filtered search — the scalable list path for large incident volumes. */
+    @Transactional(readOnly = true)
+    public Page<IncidentResponse> search(IncidentStatus status, Severity severity, String q, Pageable pageable) {
+        String term = (q == null) ? "" : q.trim();   // empty => LIKE '%%' matches all (avoids null-typed bind)
+        return repo.search(status, severity, term, pageable)
+                .map(IncidentResponse::from);
     }
 
     @Transactional(readOnly = true)

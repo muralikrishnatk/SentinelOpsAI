@@ -25,6 +25,9 @@ public class Incident {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;   // optimistic locking for safe concurrent edits at scale
+
     @Column(nullable = false, length = 200)
     private String title;
 
